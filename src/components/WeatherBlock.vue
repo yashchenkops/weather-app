@@ -1,8 +1,14 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { getWeather, getForecast, searchCities } from '../api/weather';
+import { getFavorites, toggleFavorite } from '../utils/favorites';
 
 import WeatherChart from './WeatherChart.vue';
+
+const props = defineProps({
+  initialCity: String,
+  noSearch: Boolean,
+});
 
 const emit = defineEmits(['delete']);
 
@@ -14,6 +20,7 @@ const suggestions = ref([]);
 const showSuggestions = ref(false);
 const forecast = ref(null);
 const mode = ref('day');
+const favorites = ref(getFavorites());
 
 function selectCity(item) {
   city.value = item.name;
@@ -22,6 +29,16 @@ function selectCity(item) {
   showSuggestions.value = false;
 
   loadWeather();
+}
+
+function onFavorite() {
+  if (!weather.value) return;
+
+  try {
+    favorites.value = toggleFavorite(weather.value.name);
+  } catch (e) {
+    alert(e.message);
+  }
 }
 
 async function loadWeather() {
@@ -113,18 +130,29 @@ const chartLabels = computed(() => {
 const chartTemps = computed(() => {
   return mode.value === 'day' ? dayTemps.value : weekTemps.value;
 });
+
+const isFavorite = computed(() => (weather.value ? favorites.value.includes(weather.value.name) : false));
+
+onMounted(() => {
+  if (props.initialCity) {
+    city.value = props.initialCity;
+    loadWeather();
+  }
+});
 </script>
 
 <template>
   <div class="weather-block">
     <div class="top-row">
-      <div class="weather-block__search">
+      <div v-if="!noSearch" class="weather-block__search">
         <input class="search-input" v-model="city" type="text" placeholder="Enter city" @input="search" @keyup.enter="loadWeather" />
         <ul v-if="showSuggestions && suggestions.length" class="suggestions">
           <li v-for="item in suggestions" :key="item.lat" @click="selectCity(item)">{{ item.name }}, {{ item.country }}</li>
         </ul>
       </div>
-      <button class="favorite-btn">☆ Add to favorites</button>
+      <button class="favorite-btn" @click="onFavorite">
+        {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
+      </button>
       <button class="delete-btn" @click="emit('delete')">✕</button>
     </div>
 
@@ -154,6 +182,10 @@ const chartTemps = computed(() => {
   margin-bottom: 20px;
   background: white;
   border-radius: 8px;
+
+  &:first-child {
+    border-top-left-radius: 0;
+  }
 }
 
 .top-row {
@@ -183,15 +215,15 @@ const chartTemps = computed(() => {
     top: 32px;
     left: 0;
     width: 100%;
-  }
 
-  .suggestions li {
-    padding: 6px;
-    cursor: pointer;
-  }
+    li {
+      padding: 6px;
+      cursor: pointer;
 
-  .suggestions li:hover {
-    background: #eee;
+      &:hover {
+        background: #eee;
+      }
+    }
   }
 }
 

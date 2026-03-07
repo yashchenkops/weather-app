@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue';
+import { getFavorites } from './utils/favorites';
+
 import WeatherBlock from './components/WeatherBlock.vue';
 
 const tab = ref('home');
-
 const blocks = ref([1]);
+const favoriteCities = ref([]);
 
 function addBlock() {
   if (blocks.value.length >= 5) return;
@@ -14,6 +16,11 @@ function addBlock() {
 function removeBlock(id) {
   blocks.value = blocks.value.filter((b) => b !== id);
 }
+
+function openFavorites() {
+  tab.value = 'favorites';
+  favoriteCities.value = getFavorites();
+}
 </script>
 
 <template>
@@ -22,7 +29,7 @@ function removeBlock(id) {
       <h1>Weather</h1>
       <nav>
         <button @click="tab = 'home'" :class="{ active: tab === 'home' }">Home</button>
-        <button @click="tab = 'favorites'" :class="{ active: tab === 'favorites' }">Favorites</button>
+        <button @click="openFavorites" :class="{ active: tab === 'favorites' }">Favorites</button>
       </nav>
     </header>
     <main>
@@ -30,7 +37,9 @@ function removeBlock(id) {
         <button class="add-btn" @click="addBlock">+</button>
         <WeatherBlock v-for="id in blocks" :key="id" @delete="removeBlock(id)" />
       </div>
-      <div v-if="tab === 'favorites'">Favorites page</div>
+      <div v-if="tab === 'favorites'">
+        <WeatherBlock v-for="city in favoriteCities" :key="city" :initialCity="city" :noSearch="true" />
+      </div>
     </main>
   </div>
 </template>
