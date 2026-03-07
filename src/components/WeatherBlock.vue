@@ -1,20 +1,54 @@
 <script setup>
+import { ref } from 'vue';
+import { getWeather } from '../api/weather';
+
 const emit = defineEmits(['delete']);
+
+const city = ref('');
+const weather = ref(null);
+const loading = ref(false);
+const error = ref(null);
+
+async function loadWeather() {
+  if (!city.value) return;
+
+  loading.value = true;
+  error.value = null;
+
+  try {
+    weather.value = await getWeather(city.value);
+  } catch (e) {
+    error.value = 'City not found';
+  }
+
+  loading.value = false;
+}
 </script>
 
 <template>
   <div class="weather-block">
-    <button class="delete-btn" @click="emit('delete')">✕</button>
     <div class="top-row">
-      <input type="text" placeholder="Enter city" />
+      <input v-model="city" type="text" placeholder="Enter city" @keyup.enter="loadWeather" />
       <button class="favorite-btn">☆ Add to favorites</button>
+      <button class="delete-btn" @click="emit('delete')">✕</button>
     </div>
 
     <div class="switch-row">
       <button>Day</button>
       <button>Week</button>
     </div>
-    <div class="weather-content">Weather data will be here</div>
+    <div class="weather-content">
+      <div v-if="loading">Loading...</div>
+      
+      <div v-if="error">
+        {{ error }}
+      </div>
+      <div v-if="weather">
+        <h3>{{ weather.name }}</h3>
+        <p>Temperature: {{ weather.main.temp }} °C</p>
+        <p>{{ weather.weather[0].description }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -27,23 +61,15 @@ const emit = defineEmits(['delete']);
   border-radius: 8px;
 }
 
-.delete-btn {
-  float: right;
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-size: 16px;
-}
-
 .top-row {
   display: flex;
   justify-content: space-between;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
 .top-row input {
   flex: 1;
-  margin-right: 10px;
   padding: 6px;
 }
 
