@@ -4,10 +4,12 @@ import { getWeather, getForecast, searchCities } from '../api/weather';
 import { getFavorites, toggleFavorite } from '../utils/favorites';
 
 import WeatherChart from './WeatherChart.vue';
+import ConfirmModal from './ConfirmModal.vue';
 
 const props = defineProps({
   initialCity: String,
   noSearch: Boolean,
+  noDelete: Boolean,
 });
 
 const emit = defineEmits(['delete']);
@@ -21,6 +23,7 @@ const showSuggestions = ref(false);
 const forecast = ref(null);
 const mode = ref('day');
 const favorites = ref(getFavorites());
+const showModal = ref(false);
 
 function selectCity(item) {
   city.value = item.name;
@@ -39,6 +42,19 @@ function onFavorite() {
   } catch (e) {
     alert(e.message);
   }
+}
+
+function askDelete() {
+  showModal.value = true;
+}
+
+function confirmDelete() {
+  showModal.value = false;
+  emit('delete');
+}
+
+function cancelDelete() {
+  showModal.value = false;
 }
 
 async function loadWeather() {
@@ -153,7 +169,7 @@ onMounted(() => {
       <button class="favorite-btn" @click="onFavorite">
         {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
       </button>
-      <button class="delete-btn" @click="emit('delete')">✕</button>
+      <button v-if="!noDelete" class="delete-btn" @click="askDelete">✕</button>
     </div>
 
     <div class="switch-row">
@@ -173,6 +189,7 @@ onMounted(() => {
       <WeatherChart v-if="forecast" :key="mode" :labels="chartLabels" :temps="chartTemps" />
     </div>
   </div>
+  <ConfirmModal v-if="showModal" @confirm="confirmDelete" @cancel="cancelDelete" />
 </template>
 
 <style scoped>

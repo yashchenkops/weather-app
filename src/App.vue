@@ -38,7 +38,7 @@ function openFavorites() {
         <WeatherBlock v-for="id in blocks" :key="id" @delete="removeBlock(id)" />
       </div>
       <div v-if="tab === 'favorites'">
-        <WeatherBlock v-for="city in favoriteCities" :key="city" :initialCity="city" :noSearch="true" />
+        <WeatherBlock v-for="city in favoriteCities" :key="city" :initial-city="city" :no-search="true" :no-delete="true" />
       </div>
     </main>
   </div>
