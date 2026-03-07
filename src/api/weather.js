@@ -1,7 +1,7 @@
 const API_KEY = 'bf9c8c9c300c37d6cecdf9533366763e';
 
-export async function getWeather(city) {
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`);
+export async function getWeather(city, lang="en") {
+  const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}&lang=${lang}`);
 
   if (!res.ok) {
     throw new Error('City not found');
@@ -20,8 +20,8 @@ export async function searchCities(query) {
   return res.json();
 }
 
-export async function getForecast(city) {
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${API_KEY}`);
+export async function getForecast(city, lang="en") {
+  const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${API_KEY}&lang=${lang}`);
 
   if (!res.ok) {
     throw new Error('Forecast request failed');

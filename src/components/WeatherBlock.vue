@@ -5,12 +5,14 @@ import { getFavorites, toggleFavorite } from '../utils/favorites';
 
 import WeatherChart from './WeatherChart.vue';
 import ConfirmModal from './ConfirmModal.vue';
-import Loader from "./Loader.vue"
+import Loader from './Loader.vue';
 
 const props = defineProps({
   initialCity: String,
   isFavoriteLayout: Boolean,
   initialCity: String,
+  lang: String,
+  t: Function,
 });
 
 const emit = defineEmits(['delete']);
@@ -65,9 +67,8 @@ async function loadWeather() {
   error.value = null;
 
   try {
-    weather.value = await getWeather(city.value);
-
-    forecast.value = await getForecast(city.value);
+    weather.value = await getWeather(city.value, props.lang)
+    forecast.value = await getForecast(city.value, props.lang)
   } catch (e) {
     error.value = 'City not found';
   }
@@ -162,8 +163,8 @@ onMounted(() => {
   <div class="weather-block">
     <div v-if="isFavoriteLayout" class="weather-block__top is-favorite-layout">
       <div class="switch-row">
-        <button @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
-        <button @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
+        <button @click="mode = 'day'" :class="{ active: mode === 'day' }">{{ t('day') }}</button>
+        <button @click="mode = 'week'" :class="{ active: mode === 'week' }">{{ t('week') }}</button>
       </div>
       <div class="top-row">
         <button class="favorite-btn" @click="onFavorite">
@@ -174,7 +175,7 @@ onMounted(() => {
     <div v-else class="weather-block__top">
       <div class="top-row">
         <div class="weather-block__search">
-          <input class="search-input" v-model="city" type="text" placeholder="Enter city" @input="search" @keyup.enter="loadWeather" />
+          <input class="search-input" v-model="city" type="text" :placeholder="t('search')" @input="search" @keyup.enter="loadWeather" />
           <ul v-if="showSuggestions && suggestions.length" class="suggestions">
             <li v-for="item in suggestions" :key="item.lat" @click="selectCity(item)">{{ item.name }}, {{ item.country }}</li>
           </ul>
@@ -191,7 +192,7 @@ onMounted(() => {
       </div>
     </div>
     <div class="weather-content">
-      <Loader v-if="loading"/>
+      <Loader v-if="loading" />
       <div v-if="error">
         {{ error }}
       </div>

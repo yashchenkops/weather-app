@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { getFavorites } from './utils/favorites';
 import { getUserCity } from './api/ip';
+import { messages } from './i18n';
 
 import WeatherBlock from './components/WeatherBlock.vue';
 
@@ -9,6 +10,7 @@ const tab = ref('home');
 const blocks = ref([1]);
 const favoriteCities = ref([]);
 const theme = ref('day');
+const lang = ref('en');
 
 function addBlock() {
   if (blocks.value.length >= 5) return;
@@ -26,6 +28,10 @@ function openFavorites() {
 
 function toggleTheme() {
   theme.value = theme.value === 'day' ? 'night' : 'day';
+}
+
+function t(key) {
+  return messages[lang.value][key];
 }
 
 onMounted(async () => {
@@ -55,10 +61,14 @@ onMounted(async () => {
       <h1>Weather</h1>
       <div class="header__actions">
         <nav class="header__tabs">
-          <button @click="tab = 'home'" :class="{ active: tab === 'home' }">Home</button>
-          <button @click="openFavorites" :class="{ active: tab === 'favorites' }">Favorites</button>
+          <button @click="tab = 'home'" :class="{ active: tab === 'home' }">{{ t('home') }}</button>
+          <button @click="openFavorites" :class="{ active: tab === 'favorites' }">{{ t('favorites') }}</button>
         </nav>
         <div class="header__tabs">
+          <select v-model="lang">
+            <option value="en">EN</option>
+            <option value="uk">UK</option>
+          </select>
           <button @click="toggleTheme">
             {{ theme === 'day' ? '🌙 Night' : '☀ Day' }}
           </button>
@@ -68,10 +78,16 @@ onMounted(async () => {
     </header>
     <main>
       <div v-if="tab === 'home'">
-        <WeatherBlock v-for="block in blocks" :key="block.id" :initial-city="block.city" @delete="removeBlock(block.id)" />
+        <WeatherBlock
+          v-for="block in blocks"
+          :key="block.id"
+          :initial-city="block.city"
+          :lang="lang"
+          :t="t"
+          @delete="removeBlock(block.id)" />
       </div>
       <div v-if="tab === 'favorites'">
-        <WeatherBlock v-for="city in favoriteCities" :key="city" :initial-city="city" :is-favorite-layout="true" />
+        <WeatherBlock v-for="city in favoriteCities" :key="city" :initial-city="city" :is-favorite-layout="true" :lang="lang" :t="t" />
       </div>
     </main>
   </div>
