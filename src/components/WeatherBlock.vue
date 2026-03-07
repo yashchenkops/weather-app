@@ -5,6 +5,7 @@ import { getFavorites, toggleFavorite } from '../utils/favorites';
 
 import WeatherChart from './WeatherChart.vue';
 import ConfirmModal from './ConfirmModal.vue';
+import Loader from "./Loader.vue"
 
 const props = defineProps({
   initialCity: String,
@@ -190,7 +191,7 @@ onMounted(() => {
       </div>
     </div>
     <div class="weather-content">
-      <div v-if="loading">Loading...</div>
+      <Loader v-if="loading"/>
       <div v-if="error">
         {{ error }}
       </div>
