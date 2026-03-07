@@ -13,6 +13,7 @@ const error = ref(null);
 const suggestions = ref([]);
 const showSuggestions = ref(false);
 const forecast = ref(null);
+const mode = ref('day');
 
 function selectCity(item) {
   city.value = item.name;
@@ -52,7 +53,7 @@ async function search() {
   showSuggestions.value = true;
 }
 
-const chartLabels = computed(() => {
+const dayLabels = computed(() => {
   if (!forecast.value) return [];
 
   return forecast.value.list.slice(0, 8).map((item) => {
@@ -61,10 +62,56 @@ const chartLabels = computed(() => {
   });
 });
 
-const chartTemps = computed(() => {
+const dayTemps = computed(() => {
   if (!forecast.value) return [];
 
   return forecast.value.list.slice(0, 8).map((item) => item.main.temp);
+});
+
+const weekLabels = computed(() => {
+  if (!forecast.value) return [];
+
+  const days = {};
+
+  forecast.value.list.forEach((item) => {
+    const date = item.dt_txt.split(' ')[0];
+
+    if (!days[date]) {
+      days[date] = [];
+    }
+
+    days[date].push(item.main.temp);
+  });
+
+  return Object.keys(days).slice(0, 5);
+});
+
+const weekTemps = computed(() => {
+  if (!forecast.value) return [];
+
+  const days = {};
+
+  forecast.value.list.forEach((item) => {
+    const date = item.dt_txt.split(' ')[0];
+
+    if (!days[date]) {
+      days[date] = [];
+    }
+
+    days[date].push(item.main.temp);
+  });
+
+  return Object.values(days)
+    .slice(0, 5)
+    .map((arr) => arr.reduce((a, b) => a + b, 0) / arr.length);
+});
+
+const chartLabels = computed(() => {
+  return mode.value === 'day' ? dayLabels.value : weekLabels.value;
+});
+
+const chartTemps = computed(() => {
+  return mode.value === 'day' ? dayTemps.value : weekTemps.value;
 });
 </script>
 
@@ -82,8 +129,8 @@ const chartTemps = computed(() => {
     </div>
 
     <div class="switch-row">
-      <button>Day</button>
-      <button>Week</button>
+      <button @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
+      <button @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
     </div>
     <div class="weather-content">
       <div v-if="loading">Loading...</div>
@@ -95,7 +142,7 @@ const chartTemps = computed(() => {
         <p>Temperature: {{ weather.main.temp }} °C</p>
         <p>{{ weather.weather[0].description }}</p>
       </div>
-      <WeatherChart v-bind="city" v-if="forecast" :labels="chartLabels" :temps="chartTemps" />
+      <WeatherChart v-if="forecast" :key="mode" :labels="chartLabels" :temps="chartTemps" />
     </div>
   </div>
 </template>
