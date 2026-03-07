@@ -1,22 +1,40 @@
 <script setup>
 import { ref } from 'vue';
-
 import WeatherBlock from './components/WeatherBlock.vue';
 
 const tab = ref('home');
+
+const blocks = ref([1]);
+
+function addBlock() {
+  if (blocks.value.length >= 5) return;
+  blocks.value.push(Date.now());
+}
+
+function removeBlock(id) {
+  blocks.value = blocks.value.filter((b) => b !== id);
+}
 </script>
 
 <template>
   <div class="container">
     <header class="header">
-      <h1 class="logo">Weather app</h1>
-      <nav class="tabs">
+      <h1>Weather</h1>
+
+      <nav>
         <button @click="tab = 'home'" :class="{ active: tab === 'home' }">Home</button>
+
         <button @click="tab = 'favorites'" :class="{ active: tab === 'favorites' }">Favorites</button>
       </nav>
     </header>
+
     <main>
-      <div v-if="tab === 'home'"><WeatherBlock /></div>
+      <div v-if="tab === 'home'">
+        <button class="add-btn" @click="addBlock">+</button>
+
+        <WeatherBlock v-for="id in blocks" :key="id" @delete="removeBlock(id)" />
+      </div>
+
       <div v-if="tab === 'favorites'">Favorites page</div>
     </main>
   </div>
