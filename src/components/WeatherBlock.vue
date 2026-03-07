@@ -8,8 +8,8 @@ import ConfirmModal from './ConfirmModal.vue';
 
 const props = defineProps({
   initialCity: String,
-  noSearch: Boolean,
-  noDelete: Boolean,
+  isFavoriteLayout: Boolean,
+  initialCity: String,
 });
 
 const emit = defineEmits(['delete']);
@@ -89,7 +89,7 @@ async function search() {
 const dayLabels = computed(() => {
   if (!forecast.value) return [];
 
-  return forecast.value.list.slice(0, 8).map((item) => {
+  return forecast.value.list.slice(0, 24).map((item) => {
     const date = new Date(item.dt_txt);
     return date.getHours() + ':00';
   });
@@ -98,7 +98,7 @@ const dayLabels = computed(() => {
 const dayTemps = computed(() => {
   if (!forecast.value) return [];
 
-  return forecast.value.list.slice(0, 8).map((item) => item.main.temp);
+  return forecast.value.list.slice(0, 24).map((item) => item.main.temp);
 });
 
 const weekLabels = computed(() => {
@@ -159,22 +159,35 @@ onMounted(() => {
 
 <template>
   <div class="weather-block">
-    <div class="top-row">
-      <div v-if="!noSearch" class="weather-block__search">
-        <input class="search-input" v-model="city" type="text" placeholder="Enter city" @input="search" @keyup.enter="loadWeather" />
-        <ul v-if="showSuggestions && suggestions.length" class="suggestions">
-          <li v-for="item in suggestions" :key="item.lat" @click="selectCity(item)">{{ item.name }}, {{ item.country }}</li>
-        </ul>
+    <div v-if="isFavoriteLayout" class="weather-block__top is-favorite-layout">
+      <div class="switch-row">
+        <button @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
+        <button @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
       </div>
-      <button class="favorite-btn" @click="onFavorite">
-        {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
-      </button>
-      <button v-if="!noDelete" class="delete-btn" @click="askDelete">✕</button>
+      <div class="top-row">
+        <button class="favorite-btn" @click="onFavorite">
+          {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
+        </button>
+      </div>
     </div>
+    <div v-else class="weather-block__top">
+      <div class="top-row">
+        <div class="weather-block__search">
+          <input class="search-input" v-model="city" type="text" placeholder="Enter city" @input="search" @keyup.enter="loadWeather" />
+          <ul v-if="showSuggestions && suggestions.length" class="suggestions">
+            <li v-for="item in suggestions" :key="item.lat" @click="selectCity(item)">{{ item.name }}, {{ item.country }}</li>
+          </ul>
+        </div>
+        <button class="favorite-btn" @click="onFavorite">
+          {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
+        </button>
+        <button class="delete-btn" @click="askDelete">✕</button>
+      </div>
 
-    <div class="switch-row">
-      <button @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
-      <button @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
+      <div class="switch-row">
+        <button @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
+        <button @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
+      </div>
     </div>
     <div class="weather-content">
       <div v-if="loading">Loading...</div>
@@ -202,7 +215,14 @@ onMounted(() => {
 
   &:first-child {
     border-top-left-radius: 0;
+    border-top-right-radius: 0;
   }
+}
+
+.is-favorite-layout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .top-row {
@@ -246,6 +266,7 @@ onMounted(() => {
 
 .favorite-btn {
   white-space: nowrap;
+  margin-left: auto;
 }
 
 .switch-row {
