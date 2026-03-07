@@ -25,7 +25,6 @@ function removeBlock(id) {
         <button @click="tab = 'favorites'" :class="{ active: tab === 'favorites' }">Favorites</button>
       </nav>
     </header>
-
     <main>
       <div v-if="tab === 'home'">
         <button class="add-btn" @click="addBlock">+</button>

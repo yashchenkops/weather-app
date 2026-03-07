@@ -1,6 +1,8 @@
 <script setup>
-import { ref } from 'vue';
-import { getWeather, searchCities } from '../api/weather';
+import { ref, computed } from 'vue';
+import { getWeather, getForecast, searchCities } from '../api/weather';
+
+import WeatherChart from './WeatherChart.vue';
 
 const emit = defineEmits(['delete']);
 
@@ -10,6 +12,7 @@ const loading = ref(false);
 const error = ref(null);
 const suggestions = ref([]);
 const showSuggestions = ref(false);
+const forecast = ref(null);
 
 function selectCity(item) {
   city.value = item.name;
@@ -28,6 +31,8 @@ async function loadWeather() {
 
   try {
     weather.value = await getWeather(city.value);
+
+    forecast.value = await getForecast(city.value);
   } catch (e) {
     error.value = 'City not found';
   }
@@ -46,6 +51,21 @@ async function search() {
   suggestions.value = data;
   showSuggestions.value = true;
 }
+
+const chartLabels = computed(() => {
+  if (!forecast.value) return [];
+
+  return forecast.value.list.slice(0, 8).map((item) => {
+    const date = new Date(item.dt_txt);
+    return date.getHours() + ':00';
+  });
+});
+
+const chartTemps = computed(() => {
+  if (!forecast.value) return [];
+
+  return forecast.value.list.slice(0, 8).map((item) => item.main.temp);
+});
 </script>
 
 <template>
@@ -67,7 +87,6 @@ async function search() {
     </div>
     <div class="weather-content">
       <div v-if="loading">Loading...</div>
-
       <div v-if="error">
         {{ error }}
       </div>
@@ -76,6 +95,7 @@ async function search() {
         <p>Temperature: {{ weather.main.temp }} °C</p>
         <p>{{ weather.weather[0].description }}</p>
       </div>
+      <WeatherChart v-bind="city" v-if="forecast" :labels="chartLabels" :temps="chartTemps" />
     </div>
   </div>
 </template>
