@@ -20,10 +20,8 @@ function removeBlock(id) {
   <div class="container">
     <header class="header">
       <h1>Weather</h1>
-
       <nav>
         <button @click="tab = 'home'" :class="{ active: tab === 'home' }">Home</button>
-
         <button @click="tab = 'favorites'" :class="{ active: tab === 'favorites' }">Favorites</button>
       </nav>
     </header>
@@ -31,10 +29,8 @@ function removeBlock(id) {
     <main>
       <div v-if="tab === 'home'">
         <button class="add-btn" @click="addBlock">+</button>
-
         <WeatherBlock v-for="id in blocks" :key="id" @delete="removeBlock(id)" />
       </div>
-
       <div v-if="tab === 'favorites'">Favorites page</div>
     </main>
   </div>
@@ -47,6 +43,21 @@ function removeBlock(id) {
   padding: 20px;
 }
 
+button {
+  padding: 10px 15px;
+  border: none;
+  font-weight: 600;
+
+  &:not(.active) {
+    cursor: pointer;
+  }
+
+  &.active {
+    background: black;
+    color: white;
+  }
+}
+
 .logo {
   text-align: center;
   margin-top: 0;
@@ -56,20 +67,5 @@ function removeBlock(id) {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-button {
-  padding: 10px 15px;
-  border: none;
-  font-weight: 600;
-
-  &:not(.active) {
-    cursor: pointer;
-  }
-}
-
-.active {
-  background: black;
-  color: white;
 }
 </style>
