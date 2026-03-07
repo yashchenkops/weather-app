@@ -1,7 +1,10 @@
-<script setup></script>
+<script setup>
+const emit = defineEmits(['delete']);
+</script>
 
 <template>
   <div class="weather-block">
+    <button class="delete-btn" @click="emit('delete')">✕</button>
     <div class="top-row">
       <input type="text" placeholder="Enter city" />
       <button class="favorite-btn">☆ Add to favorites</button>
@@ -22,6 +25,14 @@
   margin-bottom: 20px;
   background: white;
   border-radius: 8px;
+}
+
+.delete-btn {
+  float: right;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 16px;
 }
 
 .top-row {
