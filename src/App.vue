@@ -8,6 +8,7 @@ import WeatherBlock from './components/WeatherBlock.vue';
 const tab = ref('home');
 const blocks = ref([1]);
 const favoriteCities = ref([]);
+const theme = ref('day');
 
 function addBlock() {
   if (blocks.value.length >= 5) return;
@@ -21,6 +22,10 @@ function removeBlock(id) {
 function openFavorites() {
   tab.value = 'favorites';
   favoriteCities.value = getFavorites();
+}
+
+function toggleTheme() {
+  theme.value = theme.value === 'day' ? 'night' : 'day';
 }
 
 onMounted(async () => {
@@ -45,7 +50,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container" :class="theme">
     <header class="header">
       <h1>Weather</h1>
       <div class="header__actions">
@@ -53,7 +58,12 @@ onMounted(async () => {
           <button @click="tab = 'home'" :class="{ active: tab === 'home' }">Home</button>
           <button @click="openFavorites" :class="{ active: tab === 'favorites' }">Favorites</button>
         </nav>
-        <button v-if="tab === 'home'" class="add-btn" @click="addBlock">+</button>
+        <div class="header__tabs">
+          <button @click="toggleTheme">
+            {{ theme === 'day' ? '🌙 Night' : '☀ Day' }}
+          </button>
+          <button v-if="tab === 'home'" class="add-btn" @click="addBlock">+</button>
+        </div>
       </div>
     </header>
     <main>
@@ -68,10 +78,37 @@ onMounted(async () => {
 </template>
 
 <style>
+.container.day {
+  background: #f5f5f5;
+  color: #000;
+}
+
+.container.night {
+  background: #1e1e1e;
+  color: #fff;
+}
+
+.container.night .weather-block {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+.container.night input {
+  background: #333;
+  color: white;
+  border: 1px solid #555;
+}
+
 .container {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
+}
+
+.header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .header__actions {
