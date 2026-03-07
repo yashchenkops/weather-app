@@ -9,3 +9,13 @@ export async function getWeather(city) {
 
   return res.json();
 }
+
+export async function searchCities(query) {
+  const res = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${API_KEY}`);
+
+  if (!res.ok) {
+    throw new Error('Cities request failed');
+  }
+
+  return res.json();
+}
