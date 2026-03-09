@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { getFavorites } from './utils/favorites';
 import { getUserCity } from './api/ip';
 import { messages } from './i18n';
@@ -9,7 +9,7 @@ import WeatherBlock from './components/WeatherBlock.vue';
 const tab = ref('home');
 const blocks = ref([1]);
 const favoriteCities = ref([]);
-const theme = ref('light');
+const isDarkTheme = ref(false);
 const lang = ref('en');
 
 function addBlock() {
@@ -21,6 +21,7 @@ function addBlock() {
 }
 
 function removeBlock(id) {
+  if (blocks.value.length === 1) return alert('Must be at least one block!');
   blocks.value = blocks.value.filter((block) => block.id !== id);
 }
 
@@ -29,8 +30,8 @@ function openFavorites() {
   favoriteCities.value = getFavorites();
 }
 
-function toggleTheme() {
-  theme.value = theme.value === 'light' ? 'dark' : 'light';
+function applyTheme(value) {
+  document.documentElement.classList.toggle('dark', value);
 }
 
 function t(key) {
@@ -54,11 +55,28 @@ onMounted(async () => {
       },
     ];
   }
+
+  const savedTheme = localStorage.getItem('theme');
+
+  if (savedTheme) {
+    isDarkTheme.value = savedTheme === 'dark';
+  } else {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    isDarkTheme.value = prefersDark;
+  }
+
+  applyTheme(isDarkTheme.value);
+});
+
+watch(isDarkTheme, (value) => {
+  applyTheme(value);
+
+  localStorage.setItem('theme', value ? 'dark' : '');
 });
 </script>
 
 <template>
-  <div class="container" :class="theme">
+  <div class="container">
     <header class="header">
       <div class="header__top">
         <h1>Weather</h1>
@@ -67,11 +85,8 @@ onMounted(async () => {
             <option value="en">EN</option>
             <option value="uk">UK</option>
           </select>
-          <button @click="toggleTheme">
-            {{ theme === 'day' ? '🌙 Night' : '☀ Day' }}
-          </button>
           <label class="switch">
-            <input type="checkbox" />
+            <input type="checkbox" v-model="isDarkTheme" />
             <span class="slider"></span>
           </label>
         </div>

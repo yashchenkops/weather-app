@@ -67,8 +67,8 @@ async function loadWeather() {
   error.value = null;
 
   try {
-    weather.value = await getWeather(city.value, props.lang)
-    forecast.value = await getForecast(city.value, props.lang)
+    weather.value = await getWeather(city.value, props.lang);
+    forecast.value = await getForecast(city.value, props.lang);
   } catch (e) {
     error.value = 'City not found';
   }
@@ -209,7 +209,8 @@ onMounted(() => {
 
 <style scoped>
 .weather-block {
-  border: 1px solid #ddd;
+  background: var(--card);
+  border: 1px solid var(--border);
   padding: 20px;
   margin-bottom: 20px;
   background: white;
@@ -241,12 +242,17 @@ onMounted(() => {
 
   .search-input {
     flex: 1;
-    padding: 6px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    background: var(--input-bg);
+    color: var(--text);
+    border-radius: 6px;
   }
 
   .suggestions {
     list-style: none;
-    border: 1px solid #ddd;
+    background: var(--card);
+    border: 1px solid var(--border);
     margin-top: 5px;
     padding: 0;
     background: white;

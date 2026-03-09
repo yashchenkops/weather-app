@@ -6,8 +6,8 @@
 .loader {
   width: 30px;
   height: 30px;
-  border: 4px solid #ddd;
-  border-top: 4px solid black;
+  border:4px solid var(--border);
+  border-top:4px solid var(--text);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 20px auto;
