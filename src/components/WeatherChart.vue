@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import Chart from 'chart.js/auto';
 
 const props = defineProps({
@@ -8,9 +8,14 @@ const props = defineProps({
 });
 
 const canvas = ref(null);
+let chart = null;
 
-onMounted(() => {
-  new Chart(canvas.value, {
+function renderChart() {
+  if (chart) {
+    chart.destroy();
+  }
+
+  chart = new Chart(canvas.value, {
     type: 'line',
     data: {
       labels: props.labels,
@@ -25,7 +30,11 @@ onMounted(() => {
       responsive: true,
     },
   });
-});
+}
+
+onMounted(renderChart);
+
+watch(() => [props.labels, props.temps], renderChart);
 </script>
 
 <template>

@@ -9,7 +9,7 @@ import WeatherBlock from './components/WeatherBlock.vue';
 const tab = ref('home');
 const blocks = ref([1]);
 const favoriteCities = ref([]);
-const theme = ref('day');
+const theme = ref('light');
 const lang = ref('en');
 
 function addBlock() {
@@ -30,7 +30,7 @@ function openFavorites() {
 }
 
 function toggleTheme() {
-  theme.value = theme.value === 'day' ? 'night' : 'day';
+  theme.value = theme.value === 'light' ? 'dark' : 'light';
 }
 
 function t(key) {
@@ -102,6 +102,13 @@ onMounted(async () => {
 </template>
 
 <style>
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  min-width: 360px;
+}
+
 .container.day {
   background: #f5f5f5;
   color: #000;
@@ -121,13 +128,6 @@ onMounted(async () => {
   background: #333;
   color: white;
   border: 1px solid #555;
-}
-
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
-  min-width: 360px;
 }
 
 .header__top {
@@ -160,8 +160,6 @@ onMounted(async () => {
 }
 
 .switch {
-  --size-of-icon: 1.4em;
-  --slider-offset: 0.3em;
   position: relative;
   width: 3.5em;
   height: 2em;
