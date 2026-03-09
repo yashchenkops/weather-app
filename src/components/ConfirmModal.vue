@@ -17,29 +17,26 @@ const emit = defineEmits(['confirm', 'cancel']);
 <style scoped>
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
   z-index: 100;
 }
 
 .modal {
-  background: white;
+  width: 280px;
   padding: 20px;
   border-radius: 8px;
-  width: 280px;
+  background: var(--bg);
   text-align: center;
 }
 
 .actions {
-  margin-top: 15px;
   display: flex;
-  gap: 10px;
   justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
 }
 </style>

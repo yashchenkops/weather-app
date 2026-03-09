@@ -7,23 +7,31 @@
 }
 
 :root {
-  --bg: #f5f6f8;
-  --card: #ffffff;
-  --border: #e3e6ea;
+  --bg: #ffffff;
+  --item-bg: #e9e9e9;
   --text: #1f2937;
+  --border: #d5d8dd;
   --input-bg: #ffffff;
-  --button-bg: #111827;
-  --button-text: #ffffff;
+
+  --button-bg: #d8d8d8;
+  --button-text: #333333;
+  --button-hover: #d3d3d3;
+  --button-bg-active: #222222;
+  --button-text-active: #fff;
 }
 
 html.dark {
   --bg: #0f172a;
-  --card: #1e293b;
+  --item-bg: #1e293b;
+  --text: #e4e4e4;
   --border: #334155;
-  --text: #e5e7eb;
   --input-bg: #111827;
-  --button-bg: #e5e7eb;
-  --button-text: #111827;
+
+  --button-bg: #2b3952;
+  --button-text: #e4e4e4;
+  --button-hover: #24344e;
+  --button-bg-active: #e9e9e9;
+  --button-text-active: #242424;
 }
 
 body {
@@ -52,9 +60,10 @@ button {
   font-weight: 600;
   background:var(--button-bg);
   color:var(--button-text);
+  border-radius: 5px;
 
   &:hover {
-    background-color: rgb(211, 211, 211);
+    background-color: var(--button-hover);
   }
 
   &:not(.active) {
@@ -62,7 +71,14 @@ button {
   }
 
   &.active {
-    background: black;
-    color: white;
+    background-color: var(--button-bg-active);
+    color: var(--button-text-active);
   }
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+  min-width: 360px;
 }

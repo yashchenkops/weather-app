@@ -79,7 +79,7 @@ watch(isDarkTheme, (value) => {
   <div class="container">
     <header class="header">
       <div class="header__top">
-        <h1>Weather</h1>
+        <h1 class="header__title">Weather App</h1>
         <div class="header__tabs">
           <select v-model="lang">
             <option value="en">EN</option>
@@ -93,10 +93,10 @@ watch(isDarkTheme, (value) => {
       </div>
       <div class="header__actions">
         <nav class="header__tabs">
-          <button @click="tab = 'home'" :class="{ active: tab === 'home' }">{{ t('home') }}</button>
-          <button @click="openFavorites" :class="{ active: tab === 'favorites' }">{{ t('favorites') }}</button>
+          <button type="button" @click="tab = 'home'" :class="{ active: tab === 'home' }">{{ t('home') }}</button>
+          <button type="button" @click="openFavorites" :class="{ active: tab === 'favorites' }">{{ t('favorites') }}</button>
         </nav>
-        <button v-if="tab === 'home'" class="add-btn" @click="addBlock">+</button>
+        <button type="button" v-if="tab === 'home'" class="add-btn" @click="addBlock">Add city</button>
       </div>
     </header>
     <main>
@@ -117,44 +117,19 @@ watch(isDarkTheme, (value) => {
 </template>
 
 <style>
-.container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 20px;
-  min-width: 360px;
-}
-
-.container.day {
-  background: #f5f5f5;
-  color: #000;
-}
-
-.container.night {
-  background: #1e1e1e;
-  color: #fff;
-}
-
-.container.night .weather-block {
-  background: #2a2a2a;
-  border-color: #444;
-}
-
-.container.night input {
-  background: #333;
-  color: white;
-  border: 1px solid #555;
-}
-
 .header__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 50px;
+  background-color: var(--item-bg);
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: 15px;
 }
 
-.header__actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.header__title {
+  font-weight: 600;
 }
 
 .header__tabs {
@@ -163,17 +138,14 @@ watch(isDarkTheme, (value) => {
   gap: 10px;
 }
 
-.logo {
-  text-align: center;
-  margin-top: 0;
-}
-
-.tabs {
+.header__actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
+/* DARK MODE INPUT */
 .switch {
   position: relative;
   width: 3.5em;
@@ -196,6 +168,7 @@ watch(isDarkTheme, (value) => {
   background-color: #f4f4f5;
   transition: 0.4s;
   border-radius: 30px;
+  border: 1px solid var(--border);
 }
 
 .slider:before {
@@ -222,4 +195,5 @@ input:checked + .slider::before {
     inset -3px -2px 5px -2px #8983f7,
     inset -10px -4px 0 0 #a3dafb;
 }
+/* DARK MODE INPUT */
 </style>

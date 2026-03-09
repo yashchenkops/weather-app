@@ -163,11 +163,11 @@ onMounted(() => {
   <div class="weather-block">
     <div v-if="isFavoriteLayout" class="weather-block__top is-favorite-layout">
       <div class="switch-row">
-        <button @click="mode = 'day'" :class="{ active: mode === 'day' }">{{ t('day') }}</button>
-        <button @click="mode = 'week'" :class="{ active: mode === 'week' }">{{ t('week') }}</button>
+        <button type="button" @click="mode = 'day'" :class="{ active: mode === 'day' }">{{ t('day') }}</button>
+        <button type="button" @click="mode = 'week'" :class="{ active: mode === 'week' }">{{ t('week') }}</button>
       </div>
       <div class="top-row">
-        <button class="favorite-btn" @click="onFavorite">
+        <button type="button" class="favorite-btn" @click="onFavorite">
           {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
         </button>
       </div>
@@ -180,28 +180,30 @@ onMounted(() => {
             <li v-for="item in suggestions" :key="item.lat" @click="selectCity(item)">{{ item.name }}, {{ item.country }}</li>
           </ul>
         </div>
-        <button class="favorite-btn" @click="onFavorite">
+        <button type="button" class="favorite-btn" @click="onFavorite">
           {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
         </button>
         <button class="delete-btn" @click="askDelete">✕</button>
       </div>
 
-      <div class="switch-row">
-        <button @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
-        <button @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
+      <div v-if="weather" class="switch-row">
+        <button type="button" @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
+        <button type="button" @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
       </div>
     </div>
     <div class="weather-content">
       <Loader v-if="loading" />
-      <div v-if="error">
+      <div v-else-if="error">
         {{ error }}
       </div>
-      <div v-if="weather">
+      <div v-else>
+        <div v-if="weather">
         <h3>{{ weather.name }}</h3>
         <p>Temperature: {{ weather.main.temp }} °C</p>
         <p>{{ weather.weather[0].description }}</p>
       </div>
       <WeatherChart v-if="forecast" :key="mode" :labels="chartLabels" :temps="chartTemps" />
+      </div>
     </div>
   </div>
   <ConfirmModal v-if="showModal" @confirm="confirmDelete" @cancel="cancelDelete" />
@@ -209,17 +211,11 @@ onMounted(() => {
 
 <style scoped>
 .weather-block {
-  background: var(--card);
+  background-color: var(--item-bg);
   border: 1px solid var(--border);
   padding: 20px;
   margin-bottom: 20px;
-  background: white;
-  border-radius: 8px;
-
-  &:first-child {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-  }
+  border-radius: 15px;
 }
 
 .is-favorite-layout {
@@ -246,16 +242,15 @@ onMounted(() => {
     border: 1px solid var(--border);
     background: var(--input-bg);
     color: var(--text);
-    border-radius: 6px;
+    border-radius: 5px;
   }
 
   .suggestions {
     list-style: none;
-    background: var(--card);
+    background-color: var(--bg);
     border: 1px solid var(--border);
     margin-top: 5px;
     padding: 0;
-    background: white;
     position: absolute;
     top: 32px;
     left: 0;
@@ -266,7 +261,7 @@ onMounted(() => {
       cursor: pointer;
 
       &:hover {
-        background: #eee;
+        background-color: var(--border);
       }
     }
   }
