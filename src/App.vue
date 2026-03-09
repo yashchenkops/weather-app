@@ -14,7 +14,10 @@ const lang = ref('en');
 
 function addBlock() {
   if (blocks.value.length >= 5) return;
-  blocks.value.push(Date.now());
+  blocks.value.push({
+    id: Date.now(),
+  });
+  console.log(blocks.value);
 }
 
 function removeBlock(id) {
@@ -37,7 +40,6 @@ function t(key) {
 onMounted(async () => {
   try {
     const city = await getUserCity();
-
     blocks.value = [
       {
         id: Date.now(),
@@ -58,12 +60,8 @@ onMounted(async () => {
 <template>
   <div class="container" :class="theme">
     <header class="header">
-      <h1>Weather</h1>
-      <div class="header__actions">
-        <nav class="header__tabs">
-          <button @click="tab = 'home'" :class="{ active: tab === 'home' }">{{ t('home') }}</button>
-          <button @click="openFavorites" :class="{ active: tab === 'favorites' }">{{ t('favorites') }}</button>
-        </nav>
+      <div class="header__top">
+        <h1>Weather</h1>
         <div class="header__tabs">
           <select v-model="lang">
             <option value="en">EN</option>
@@ -72,8 +70,18 @@ onMounted(async () => {
           <button @click="toggleTheme">
             {{ theme === 'day' ? '🌙 Night' : '☀ Day' }}
           </button>
-          <button v-if="tab === 'home'" class="add-btn" @click="addBlock">+</button>
+          <label class="switch">
+            <input type="checkbox" />
+            <span class="slider"></span>
+          </label>
         </div>
+      </div>
+      <div class="header__actions">
+        <nav class="header__tabs">
+          <button @click="tab = 'home'" :class="{ active: tab === 'home' }">{{ t('home') }}</button>
+          <button @click="openFavorites" :class="{ active: tab === 'favorites' }">{{ t('favorites') }}</button>
+        </nav>
+        <button v-if="tab === 'home'" class="add-btn" @click="addBlock">+</button>
       </div>
     </header>
     <main>
@@ -119,6 +127,7 @@ onMounted(async () => {
   max-width: 1200px;
   margin: auto;
   padding: 20px;
+  min-width: 360px;
 }
 
 .header__top {
@@ -139,25 +148,6 @@ onMounted(async () => {
   gap: 10px;
 }
 
-button {
-  padding: 10px 15px;
-  border: none;
-  font-weight: 600;
-
-  &:hover {
-    background-color: rgb(211, 211, 211);
-  }
-
-  &:not(.active) {
-    cursor: pointer;
-  }
-
-  &.active {
-    background: black;
-    color: white;
-  }
-}
-
 .logo {
   text-align: center;
   margin-top: 0;
@@ -167,5 +157,56 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.switch {
+  --size-of-icon: 1.4em;
+  --slider-offset: 0.3em;
+  position: relative;
+  width: 3.5em;
+  height: 2em;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f4f4f5;
+  transition: 0.4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: '';
+  height: 1.4em;
+  width: 1.4em;
+  border-radius: 20px;
+  left: 0.3em;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(40deg, #ff0080, #ff8c00 70%);
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #303136;
+}
+
+input:checked + .slider::before {
+  left: calc(100% - (1.4em + 0.3em));
+  background: #303136;
+  box-shadow:
+    inset -3px -2px 5px -2px #8983f7,
+    inset -10px -4px 0 0 #a3dafb;
 }
 </style>
