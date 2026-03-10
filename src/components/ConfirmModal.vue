@@ -1,14 +1,16 @@
 <script setup>
+import { lang, t } from '../utils/i18n';
+
 const emit = defineEmits(['confirm', 'cancel']);
 </script>
 
 <template>
   <div class="modal-overlay">
     <div class="modal">
-      <p>Are you sure you want to delete this block?</p>
+      <p>{{ t('modalConfirmText') }}</p>
       <div class="actions">
-        <button @click="emit('confirm')">Confirm</button>
-        <button @click="emit('cancel')">Cancel</button>
+        <button @click="emit('confirm')">{{ t('modalConfirm') }}</button>
+        <button @click="emit('cancel')">{{ t('modalCancel') }}</button>
       </div>
     </div>
   </div>
@@ -26,17 +28,21 @@ const emit = defineEmits(['confirm', 'cancel']);
 }
 
 .modal {
-  width: 280px;
+  width: 300px;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--bg);
   text-align: center;
+
+  p {
+    font-size: 20px;
+  }
 }
 
 .actions {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 </style>

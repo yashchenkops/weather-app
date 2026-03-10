@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { getFavorites } from './utils/favorites';
+import { lang, t } from './utils/i18n';
 import { getUserCity } from './api/ip';
-import { messages } from './i18n';
 
 import WeatherBlock from './components/WeatherBlock.vue';
 
@@ -10,7 +10,6 @@ const tab = ref('home');
 const blocks = ref([1]);
 const favoriteCities = ref([]);
 const isDarkTheme = ref(false);
-const lang = ref('en');
 
 function addBlock() {
   if (blocks.value.length >= 5) return;
@@ -21,7 +20,7 @@ function addBlock() {
 }
 
 function removeBlock(id) {
-  if (blocks.value.length === 1) return alert('Must be at least one block!');
+  if (blocks.value.length === 1) return alert(t('alert'));
   blocks.value = blocks.value.filter((block) => block.id !== id);
 }
 
@@ -32,10 +31,6 @@ function openFavorites() {
 
 function applyTheme(value) {
   document.documentElement.classList.toggle('dark', value);
-}
-
-function t(key) {
-  return messages[lang.value][key];
 }
 
 onMounted(async () => {
@@ -56,7 +51,7 @@ onMounted(async () => {
     ];
   }
 
-  const savedTheme = localStorage.getItem('theme');
+  const savedTheme = localStorage.getItem('weather-app:theme');
 
   if (savedTheme) {
     isDarkTheme.value = savedTheme === 'dark';
@@ -71,7 +66,7 @@ onMounted(async () => {
 watch(isDarkTheme, (value) => {
   applyTheme(value);
 
-  localStorage.setItem('theme', value ? 'dark' : '');
+  localStorage.setItem('weather-app:theme', value ? 'dark' : '');
 });
 </script>
 
@@ -81,9 +76,9 @@ watch(isDarkTheme, (value) => {
       <div class="header__top">
         <h1 class="header__title">Weather App</h1>
         <div class="header__tabs">
-          <select v-model="lang">
+          <select class="lang" v-model="lang">
             <option value="en">EN</option>
-            <option value="uk">UK</option>
+            <option value="ua">UA</option>
           </select>
           <label class="switch">
             <input type="checkbox" v-model="isDarkTheme" />
@@ -96,21 +91,15 @@ watch(isDarkTheme, (value) => {
           <button type="button" @click="tab = 'home'" :class="{ active: tab === 'home' }">{{ t('home') }}</button>
           <button type="button" @click="openFavorites" :class="{ active: tab === 'favorites' }">{{ t('favorites') }}</button>
         </nav>
-        <button type="button" v-if="tab === 'home'" class="add-btn" @click="addBlock">Add city</button>
+        <button type="button" v-if="tab === 'home'" class="add-btn" @click="addBlock">{{ t('addCity') }}</button>
       </div>
     </header>
     <main>
       <div v-if="tab === 'home'">
-        <WeatherBlock
-          v-for="block in blocks"
-          :key="block.id"
-          :initial-city="block.city"
-          :lang="lang"
-          :t="t"
-          @delete="removeBlock(block.id)" />
+        <WeatherBlock v-for="block in blocks" :key="block.id" :initial-city="block.city" @delete="removeBlock(block.id)" />
       </div>
       <div v-if="tab === 'favorites'">
-        <WeatherBlock v-for="city in favoriteCities" :key="city" :initial-city="city" :is-favorite-layout="true" :lang="lang" :t="t" />
+        <WeatherBlock v-for="city in favoriteCities" :key="city" :initial-city="city" :is-favorite-layout="true" />
       </div>
     </main>
   </div>
@@ -156,6 +145,10 @@ watch(isDarkTheme, (value) => {
   opacity: 0;
   width: 0;
   height: 0;
+
+  &:focus-visible + .slider {
+    outline: 2px solid;
+  }
 }
 
 .slider {
@@ -165,7 +158,7 @@ watch(isDarkTheme, (value) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #f4f4f5;
+  background-color: var(--bg);
   transition: 0.4s;
   border-radius: 30px;
   border: 1px solid var(--border);

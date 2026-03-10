@@ -1,7 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+
 import { getWeather, getForecast, searchCities } from '../api/weather';
 import { getFavorites, toggleFavorite } from '../utils/favorites';
+import { lang, t } from '../utils/i18n';
 
 import WeatherChart from './WeatherChart.vue';
 import ConfirmModal from './ConfirmModal.vue';
@@ -11,8 +13,6 @@ const props = defineProps({
   initialCity: String,
   isFavoriteLayout: Boolean,
   initialCity: String,
-  lang: String,
-  t: Function,
 });
 
 const emit = defineEmits(['delete']);
@@ -168,7 +168,7 @@ onMounted(() => {
       </div>
       <div class="top-row">
         <button type="button" class="favorite-btn" @click="onFavorite">
-          {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
+          {{ isFavorite ? t('favorite') : t('addToFavorites') }}
         </button>
       </div>
     </div>
@@ -180,15 +180,17 @@ onMounted(() => {
             <li v-for="item in suggestions" :key="item.lat" @click="selectCity(item)">{{ item.name }}, {{ item.country }}</li>
           </ul>
         </div>
-        <button type="button" class="favorite-btn" @click="onFavorite">
-          {{ isFavorite ? '★ Favorite' : '☆ Add to favorites' }}
-        </button>
-        <button class="delete-btn" @click="askDelete">✕</button>
+        <div class="weather-block__actions">
+          <button type="button" class="favorite-btn" @click="onFavorite">
+            {{ isFavorite ? t('favorite') : t('addToFavorites') }}
+          </button>
+          <button class="delete-btn" @click="askDelete">✕</button>
+        </div>
       </div>
 
       <div v-if="weather" class="switch-row">
-        <button type="button" @click="mode = 'day'" :class="{ active: mode === 'day' }">Day</button>
-        <button type="button" @click="mode = 'week'" :class="{ active: mode === 'week' }">Week</button>
+        <button type="button" @click="mode = 'day'" :class="{ active: mode === 'day' }">{{ t('day') }}</button>
+        <button type="button" @click="mode = 'week'" :class="{ active: mode === 'week' }">{{ t('week') }}</button>
       </div>
     </div>
     <div class="weather-content">
@@ -198,11 +200,11 @@ onMounted(() => {
       </div>
       <div v-else>
         <div v-if="weather">
-        <h3>{{ weather.name }}</h3>
-        <p>Temperature: {{ weather.main.temp }} °C</p>
-        <p>{{ weather.weather[0].description }}</p>
-      </div>
-      <WeatherChart v-if="forecast" :key="mode" :labels="chartLabels" :temps="chartTemps" />
+          <h3>{{ weather.name }}</h3>
+          <p>Temperature: {{ weather.main.temp }} °C</p>
+          <p>{{ weather.weather[0].description }}</p>
+        </div>
+        <WeatherChart v-if="forecast" :key="mode" :labels="chartLabels" :temps="chartTemps" />
       </div>
     </div>
   </div>
@@ -229,6 +231,10 @@ onMounted(() => {
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 10px;
+
+  @media (max-width: 500px) {
+    flex-direction: column;
+  }
 }
 
 .weather-block__search {
@@ -240,7 +246,7 @@ onMounted(() => {
     flex: 1;
     padding: 8px 10px;
     border: 1px solid var(--border);
-    background: var(--input-bg);
+    background: var(--bg);
     color: var(--text);
     border-radius: 5px;
   }
@@ -267,9 +273,19 @@ onMounted(() => {
   }
 }
 
+.weather-block__actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
 .favorite-btn {
   white-space: nowrap;
   margin-left: auto;
+
+  @media (max-width: 500px) {
+    margin-left: unset;
+  }
 }
 
 .switch-row {
