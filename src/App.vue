@@ -95,10 +95,10 @@ watch(isDarkTheme, (value) => {
       </div>
     </header>
     <main>
-      <div v-if="tab === 'home'">
+      <div v-show="tab === 'home'">
         <WeatherBlock v-for="block in blocks" :key="block.id" :initial-city="block.city" @delete="removeBlock(block.id)" />
       </div>
-      <div v-if="tab === 'favorites'">
+      <div v-show="tab === 'favorites'">
         <WeatherBlock v-for="city in favoriteCities" :key="city" :initial-city="city" :is-favorite-layout="true" />
       </div>
     </main>
