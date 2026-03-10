@@ -200,9 +200,9 @@ onMounted(() => {
       </div>
       <div v-else>
         <div v-if="weather">
-          <h3>{{ weather.name }}</h3>
-          <p>Temperature: {{ weather.main.temp }} °C</p>
-          <p>{{ weather.weather[0].description }}</p>
+          <h3>{{ t('city') }}: {{ weather.name }}</h3>
+          <p>{{ t('temperature') }}: {{ weather.main.temp }} °C</p>
+          <p>{{ t('weatherConditions') }}: {{ weather.weather[0].description }}</p>
         </div>
         <WeatherChart v-if="forecast" :key="mode" :labels="chartLabels" :temps="chartTemps" />
       </div>

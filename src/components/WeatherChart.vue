@@ -2,6 +2,8 @@
 import { ref, watch, onMounted } from 'vue';
 import Chart from 'chart.js/auto';
 
+import { lang, t } from '../utils/i18n';
+
 const props = defineProps({
   labels: Array,
   temps: Array,
